@@ -1,7 +1,7 @@
 ## Author:  TS Johns
 ## Date:    2014-05-25
-## About:   This package conatins implementation of Programming Assigment 2, for the R Programming course (aprt of John Hopkins - Data science Track)
-##          The R package contains two functions used for storing an in-memory cached version of teh function
+## About:   This package contains implementation of Programming Assingment 2, for the R Programming course (part of John Hopkins - Data science Track)
+##          The R package contains two functions used for storing an in-memory cached version of the matrix inverse
 ## Credits: This package was produced as a clone of the repo https://github.com/rdpeng/ProgrammingAssignment2
 ##
 ## Included Functions:
@@ -9,7 +9,7 @@
 ## - cacheSolve
 
 
-## This function takes a matrix as input and utilizes internal functional variable to store in memory cache of inverse
+## This function takes a matrix as input and utilizes internal function variable to store in-memory cache of inverse
 ## Function returns list of the following functions, which can be used against the returned object
 ## - set
 ## - get
@@ -46,7 +46,7 @@ makeCacheMatrix <- function(x = matrix()) {
   getInverse <- function() inv
   
   ##Sets matrix inverse to internal cached variable, via <<-
-  ##Note: Inverse is assumed to be computed outside function and shoudl be linked to previously set matrix
+  ##Note: Inverse is assumed to be computed outside function and should be linked to previously set matrix
   ##Note: Error created if supplied item is not a matrix and if not square (on error inv will be reset to NULL)
   setInverse <- function(matInv) {
     ##Set to NULL in case of error
@@ -69,9 +69,25 @@ makeCacheMatrix <- function(x = matrix()) {
 }
 
 
-## This function takes a "special" matrix craeted by makeCacheMatrix function and returns its inverse
-## Note: Function utilizes in-memory cache variable to check to see if inverse is already computed, if not inverse is called via solev and stored in-memory
-## Extra parameters may be passed to solve() via standard ...
+## This function takes a "special" matrix created by makeCacheMatrix function and returns its inverse
+## Note:  Function utilizes in-memory cache variable to check to see if inverse is already computed
+##        If not already cached, the inverse is computed via solve and stored in-memory
+##        Extra parameters may be passed to solve() via standard ...
 cacheSolve <- function(x, ...) {
-        ## Return a matrix that is the inverse of 'x'
+  ## Attempt to find inverse from cache
+  inv <- x$getInverse()
+  
+  ## If not NULL, return cached inverse
+  if(!is.null(inv)) {
+    message("Getting cached matrix inverse")
+    return(inv)
+  }
+  
+  ## If NULL branch, get matrix - computeinverse - set internally - return results
+  matData <- x$get()  
+  inv <- solve(matData, ...)
+  x$setInverse(inv)
+  
+  ## Final return - desired matrix inverse
+  inv
 }
